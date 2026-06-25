@@ -1,6 +1,6 @@
 # LEARNING.md
 
-# Homework 2 – Learning Log
+# Task 2 – Learning Log
 
 **Course:** Development Tools  
 **Topic:** Learning Unit Testing in Java using ChatGPT
