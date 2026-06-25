@@ -1,12 +1,10 @@
 # COPILOT.md
 
-# Homework 2 – AI Assisted Unit Testing
+# Task 3 – AI Assisted Unit Testing
 
 This document contains the conversations held with an AI coding assistant while developing the unit tests for `App.java`.
 
 ---
-
-# Conversation 1 – Generating Unit Tests
 
 ## Me
 
@@ -47,8 +45,6 @@ To execute the tests successfully, install JDK 21 (or configure `JAVA_HOME` to p
 
 ---
 
-# Conversation 2 – Running the Tests
-
 ## Me
 
 I installed JDK 21. Please try running the tests again.
@@ -77,8 +73,6 @@ Exit code: 0
 All unit tests in `AppTest.java` passed successfully.
 
 ---
-
-# Conversation 3 – Evaluating Test Quality
 
 ## Me
 
