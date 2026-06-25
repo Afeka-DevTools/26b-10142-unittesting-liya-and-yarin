@@ -3,7 +3,7 @@
 ## Team Members
 
 * Yarin Luder (212948376)
-* Liya Bash (214695173)
+* Liya Joni (214695173)
 
 ---
 
