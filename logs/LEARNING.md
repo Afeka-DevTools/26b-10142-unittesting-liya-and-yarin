@@ -7,8 +7,6 @@
 
 ---
 
-# Conversation 1 – What is Unit Testing in Java?
-
 ## Me
 
 אני סטונדט בשנה הראשונה בתואר הנדסת תוכנה. תסביר לי מה זה בדיקת יחידה בשפת Java ולמה הן חשובות?
@@ -307,3 +305,337 @@ public class BankAccountTest {
 בדיקות יחידה הן בדיקות אוטומטיות שמוודאות שכל יחידת קוד (לרוב מתודה או מחלקה) מתנהגת כפי שמצופה. ב-Java נהוג לכתוב אותן באמצעות JUnit, תוך שימוש ב-`@Test` וב-Assertions כמו `assertEquals()` ו-`assertTrue()`. הן מסייעות לאתר באגים מוקדם, לשמור על יציבות המערכת בעת שינויים ולשפר את איכות הקוד, ולכן הן חלק בלתי נפרד מפיתוח תוכנה מודרני.
 
 ---
+
+---
+
+## Me
+
+איך זה עובד ב JAVA ובסביבת GRADLE?
+
+---
+
+## ChatGPT
+
+כשעובדים עם Java ו-Gradle, Gradle הוא הכלי שאחראי על ניהול הפרויקט, הורדת הספריות (כמו JUnit), קימפול הקוד והרצת בדיקות היחידה.
+
+בדרך כלל מבנה הפרויקט נראה כך:
+
+```text
+MyProject/
+│
+├── build.gradle
+├── settings.gradle
+│
+├── src
+│   ├── main
+│   │   └── java
+│   │       └── Calculator.java
+│   │
+│   └── test
+│       └── java
+│           └── CalculatorTest.java
+│
+└── gradle/
+```
+
+## התיקיות החשובות
+
+### `src/main/java`
+
+כאן נמצא קוד התוכנית.
+
+לדוגמה:
+
+```java
+public class Calculator {
+
+    public int add(int a, int b) {
+        return a + b;
+    }
+}
+```
+
+---
+
+### `src/test/java`
+
+כאן נמצאות כל בדיקות היחידה.
+
+לדוגמה:
+
+```java
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
+public class CalculatorTest {
+
+    @Test
+    void addTwoNumbers() {
+
+        Calculator calculator = new Calculator();
+
+        assertEquals(8, calculator.add(5, 3));
+    }
+}
+```
+
+Gradle יודע שכל קובץ שנמצא ב־`src/test/java` הוא קובץ בדיקות.
+
+---
+
+## איך Gradle יודע להשתמש ב-JUnit?
+
+בקובץ `build.gradle` מוסיפים את התלות (Dependency):
+
+```gradle
+plugins {
+    id 'java'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.13.4'
+}
+
+test {
+    useJUnitPlatform()
+}
+```
+
+---
+
+## מה כל חלק עושה?
+
+### plugins
+
+```gradle
+plugins {
+    id 'java'
+}
+```
+
+מוסיף תמיכה בפרויקט Java.
+
+---
+
+### repositories
+
+```gradle
+repositories {
+    mavenCentral()
+}
+```
+
+אומר ל־Gradle מאיפה להוריד ספריות.
+
+---
+
+### dependencies
+
+```gradle
+testImplementation 'org.junit.jupiter:junit-jupiter:5.13.4'
+```
+
+מוריד את JUnit.
+
+שימו לב למילה:
+
+```text
+testImplementation
+```
+
+כלומר:
+
+הספרייה תהיה זמינה רק בזמן כתיבת והרצת הבדיקות, ולא כחלק מהיישום עצמו.
+
+---
+
+### useJUnitPlatform
+
+```gradle
+test {
+    useJUnitPlatform()
+}
+```
+
+אומר ל־Gradle להשתמש ב־JUnit 5.
+
+---
+
+## מה קורה כאשר מריצים Test?
+
+כאשר מפעילים:
+
+```bash
+gradle test
+```
+
+או
+
+```bash
+./gradlew test
+```
+
+Gradle מבצע את השלבים הבאים:
+
+```text
+1. קורא את build.gradle
+        │
+        ▼
+2. מוריד את JUnit (אם עדיין לא מותקן)
+        │
+        ▼
+3. מקמפל את src/main/java
+        │
+        ▼
+4. מקמפל את src/test/java
+        │
+        ▼
+5. מחפש כל מתודה עם @Test
+        │
+        ▼
+6. מריץ את כל הבדיקות
+        │
+        ▼
+7. מציג דוח תוצאות
+```
+
+---
+
+## דוגמה מלאה
+
+### Calculator.java
+
+```java
+public class Calculator {
+
+    public int multiply(int a, int b) {
+        return a * b;
+    }
+}
+```
+
+### CalculatorTest.java
+
+```java
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+public class CalculatorTest {
+
+    @Test
+    void testMultiply() {
+
+        Calculator calculator = new Calculator();
+
+        assertEquals(20, calculator.multiply(4,5));
+    }
+}
+```
+
+כאשר Gradle יריץ את הבדיקה:
+
+```text
+CalculatorTest
+
+↓
+
+testMultiply()
+
+↓
+
+calculator.multiply(4,5)
+
+↓
+
+20 == 20 ?
+
+↓
+
+PASS
+```
+
+---
+
+## ואם הבדיקה נכשלת?
+
+נניח שיש טעות:
+
+```java
+public int multiply(int a, int b) {
+    return a + b;
+}
+```
+
+התוצאה תהיה:
+
+```text
+Expected :20
+Actual   :9
+```
+
+Gradle יציג:
+
+```text
+BUILD FAILED
+
+1 test failed
+```
+
+---
+
+## איפה רואים את התוצאות?
+
+לאחר הרצת:
+
+```bash
+gradle test
+```
+
+Gradle יוצר תיקייה:
+
+```text
+build/
+    reports/
+        tests/
+            test/
+                index.html
+```
+
+הקובץ:
+
+```text
+index.html
+```
+
+הוא דוח מפורט של כל הבדיקות:
+
+- אילו עברו ✅
+- אילו נכשלו ❌
+- כמה זמן כל בדיקה לקחה
+- פירוט השגיאות (Expected מול Actual)
+- Stack Trace במקרה של כישלון
+
+---
+
+## מה קורה ב־IDE?
+
+אם אתה עובד ב־IntelliJ IDEA או VS Code עם הרחבות Java:
+
+- אפשר ללחוץ על ▶️ ליד מתודה עם `@Test` כדי להריץ אותה בלבד.
+- אפשר להריץ את כל המחלקה.
+- אפשר להריץ את כל הבדיקות בפרויקט.
+
+התוצאות יוצגו בחלון ייעודי, כולל סימון ירוק (עבר) או אדום (נכשל).
+
+ה־IDE משתמש ב־Gradle כדי לבנות את הפרויקט ולהפעיל את JUnit, כך שהתהליך דומה מאוד להרצה מהטרמינל.
+
+---
+
+### סיכום
+
+בפרויקט Java עם Gradle יש הפרדה ברורה בין קוד היישום (`src/main/java`) לבין קוד הבדיקות (`src/test/java`). קובץ `build.gradle` מגדיר את התלויות (כמו JUnit) ואת אופן הרצת הבדיקות. כאשר מריצים `gradle test` או `./gradlew test`, Gradle מקמפל את הקוד, מזהה את כל המתודות המסומנות ב־`@Test`, מריץ אותן באמצעות JUnit, ובסיום מציג דוח מפורט על הבדיקות שעברו ונכשלו. זו הסיבה שבפרויקטים מקצועיים אפשר להריץ מאות ואף אלפי בדיקות בלחיצה אחת ולקבל משוב תוך שניות.
